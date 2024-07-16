@@ -1,5 +1,5 @@
-name: Linter checks
-run-name: Linter checks was triggered by ${{ github.actor }} on ${{ github.event_name }} event
+name: Runs Tests
+run-name: Tests was triggered by ${{ github.actor }} on ${{ github.event_name }} event
 
 on:
   pull_request:
@@ -8,7 +8,7 @@ on:
       - main
 
 jobs:
-  linter-checks:
+  tests-checks:
     runs-on: ubuntu-latest
 
     steps:
@@ -23,5 +23,5 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run lint
-        run: npm run lint
+      - name: Run tests
+        run: npm run test
