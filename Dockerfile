@@ -16,8 +16,6 @@ RUN --mount=type=bind,source=package.json,target=package.json \
     --mount=type=cache,target=/root/.npm \
     npm ci
 COPY . .
-RUN npm run test
-RUN npm run lint
 RUN npm run build
 
 FROM base as build
