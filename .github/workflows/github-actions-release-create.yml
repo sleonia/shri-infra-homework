@@ -76,7 +76,7 @@ jobs:
       - name: Echo job name
         run: echo "Create Release branch ${{ env.BRANCH_NAME }}"
 
-  build-docker-image:
+  build-and-push-docker-image:
     runs-on: ubuntu-latest
     needs: create-release-branch
 
@@ -102,3 +102,13 @@ jobs:
 
       - name: Build Docker image
         run: npm run build:docker
+
+      - name: Authorize Yandex Cloud Container Registry
+        run: echo "${{ secrets.OAUTH_TOKEN }}" | docker login --username oauth --password-stdin cr.yandex
+
+      - name: Tag and push Docker images
+        run: |
+          docker tag ${{ env.IMAGE_NAME }} "cr.yandex/${{ secrets.CONTAINER_REGISTRY_ID }}/app:${{ env.RELEASE_VERSION }}"
+          docker push "cr.yandex/${{ secrets.CONTAINER_REGISTRY_ID }}/app:${{ env.RELEASE_VERSION }}"
+          docker tag ${{ env.IMAGE_NAME }} "cr.yandex/${{ secrets.CONTAINER_REGISTRY_ID }}/app:${{ env.RELEASE_VERSION }}_latest"
+          docker push "cr.yandex/${{ secrets.CONTAINER_REGISTRY_ID }}/app:${{ env.RELEASE_VERSION }}_latest"
