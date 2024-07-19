@@ -1,5 +1,9 @@
 name: Create Release
-run-name: Release creation was triggered by ${{ github.actor }} on ${{ github.event_name }} event
+
+env:
+  RELEASE_VERSION: ${{ github.run_number }}
+
+run-name: Release ${{ env.RELEASE_VERSION }} creation was triggered by ${{ github.actor }} on ${{ github.event_name }} event
 
 on:
   workflow_dispatch:
