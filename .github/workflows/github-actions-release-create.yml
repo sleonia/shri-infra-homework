@@ -132,8 +132,8 @@ jobs:
       - name: Create Tag
         run: |
           git fetch --tags
-          git tag -a "v${{ env.RELEASE_VERSION }}" -m "Release version ${{ env.RELEASE_VERSION }}" main
-          git push origin "v${{ env.RELEASE_VERSION }}"
+          git tag -a "v${{ env.RELEASE_VERSION }}" -m "Release version ${{ env.RELEASE_VERSION }}"
+          git push origin --tags
 
       - name: Update CHANGELOG.md
         env:
@@ -151,7 +151,9 @@ jobs:
               commit_message="Update CHANGELOG.md with commit list between $previous_tag and $latest_tag"
             fi
 
-            echo "commit_list=$commit_list" >> $GITHUB_ENV
+            echo "commit_list=$commit_list" > commit_list.txt
+            echo "COMMIT_LIST_FILE=commit_list.txt" >> $GITHUB_ENV
+
             { printf "### Release %s\n\n%s\n\n%s\n" "$RELEASE_VERSION" "$commit_list" "$(cat CHANGELOG.md)" ; } > CHANGELOG.new && mv CHANGELOG.new CHANGELOG.md
             git add CHANGELOG.md
             git commit -m "$commit_message"
@@ -162,10 +164,11 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          commit_list=$(cat ${{ env.COMMIT_LIST_FILE }})
           gh issue create \
             --title "Release v${{ env.RELEASE_VERSION }}" \
             --body "$(echo -e "**Date:** $(date -u +"%Y-%m-%dT%H:%M:%SZ")<br> \
               **Author:** ${{ github.actor }}<br> \
               **Version:** ${{ env.RELEASE_VERSION }}<br> \
-              **Commits:**<br>${{ env.commit_list }}<br> \
+              **Commits:**<br>${commit_list}<br> \
               **Docker Image:** cr.yandex/${{ secrets.CONTAINER_REGISTRY_ID }}/app:${{ env.RELEASE_VERSION }}")"
