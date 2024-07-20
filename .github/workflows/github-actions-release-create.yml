@@ -151,7 +151,7 @@ jobs:
               commit_message="Update CHANGELOG.md with commit list between $previous_tag and $latest_tag"
             fi
 
-            echo "commit_list=$commit_list" > commit_list.txt
+            echo "$commit_list" > commit_list.txt
             echo "COMMIT_LIST_FILE=commit_list.txt" >> $GITHUB_ENV
 
             { printf "### Release %s\n\n%s\n\n%s\n" "$RELEASE_VERSION" "$commit_list" "$(cat CHANGELOG.md)" ; } > CHANGELOG.new && mv CHANGELOG.new CHANGELOG.md
