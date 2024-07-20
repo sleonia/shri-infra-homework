@@ -1,3 +1,7 @@
+### Release 83
+
+2750d89 Update CHANGELOG.md with commit list from repository start to v82
+
 ### Release 82
 
 3cff227 Update CHANGELOG.md with commit list between v80 and v81
