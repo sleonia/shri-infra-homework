@@ -1,3 +1,7 @@
+### Release 2
+
+8227eb9 Update CHANGELOG.md with commit list between v70 and v1
+
 ### Release 1
 
 4885754 Merge pull request #16 from IgorBarbashov/feat_release_fix_flow
