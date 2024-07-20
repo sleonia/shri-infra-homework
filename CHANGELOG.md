@@ -1,3 +1,7 @@
+### Release 79
+
+7e15753 Update CHANGELOG.md with commit list from repository start to v78
+
 ### Release 78
 
 4e1180f feat-release-fix: Release Fix flow
