@@ -1,3 +1,5 @@
+Release 49
+c8b6859 Update CHANGELOG.md with commit list between v47 and v48
 Release 48
 
 Release 46
