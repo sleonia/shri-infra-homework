@@ -1,3 +1,7 @@
+### Release 1
+
+4885754 Merge pull request #16 from IgorBarbashov/feat_release_fix_flow
+
 ### Release 70
 
 7ceff9d Update CHANGELOG.md with commit list between v68 and v69
