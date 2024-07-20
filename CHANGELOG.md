@@ -1,3 +1,7 @@
+### Release 80
+
+9104722 Update CHANGELOG.md with commit list from repository start to v79
+
 ### Release 79
 
 7e15753 Update CHANGELOG.md with commit list from repository start to v78
