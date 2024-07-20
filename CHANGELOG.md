@@ -1,3 +1,5 @@
+Release 48
+
 Release 46
 cc4c561 Update CHANGELOG.md with commit list from repository start to v45
 Release 45
