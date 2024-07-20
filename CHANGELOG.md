@@ -1,3 +1,7 @@
+### Release 87
+
+e10f99c Merge pull request #27 from IgorBarbashov/feat_release_fix_flow
+
 ### Release 86
 
 commit 3c2b247173c1d51350c0fa282d3a0c4bb44cf3ea
