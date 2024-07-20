@@ -1,5 +1,8 @@
 name: Create Release
-run-name: Release creation was triggered by ${{ github.actor }} on ${{ github.event_name }} event
+run-name: Release ${{ github.run_number }} creation was triggered by ${{ github.actor }} on ${{ github.event_name }} event
+
+env:
+  RELEASE_VERSION: ${{ github.run_number }}
 
 on:
   workflow_dispatch:
@@ -40,3 +43,129 @@ jobs:
 
       - name: Run tests
         run: npm run test
+
+  create-release-branch:
+    runs-on: ubuntu-latest
+    needs:
+      - linter-checks
+      - tests-checks
+
+    outputs:
+      BRANCH_NAME: ${{ steps.set_branch_name.outputs.BRANCH_NAME }}
+
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "Shri-Deploy-Bot"
+          git config --global user.email "igorbarbashov@yandex.ru"
+
+      - name: Set Release branch name
+        id: set_branch_name
+        run: echo "BRANCH_NAME=releases/${{ env.RELEASE_VERSION }}" >> $GITHUB_ENV
+
+      - name: Create new branch
+        run: |
+          git checkout -b ${{ env.BRANCH_NAME }}
+          git push origin ${{ env.BRANCH_NAME }}
+
+      - name: Echo job name
+        run: echo "Create Release branch ${{ env.BRANCH_NAME }}"
+
+  build-and-push-docker-image:
+    runs-on: ubuntu-latest
+    needs: create-release-branch
+
+    env:
+      PORT: ${{ vars.PORT }}
+      IMAGE_NAME: ${{ vars.IMAGE_NAME }}
+      CONTAINER_NAME: ${{ vars.CONTAINER_NAME }}
+      NODE_VERSION: ${{ vars.NODE_VERSION }}
+
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.create-release-branch.outputs.BRANCH_NAME }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Docker image
+        run: npm run build:docker
+
+      - name: Authorize Yandex Cloud Container Registry
+        run: echo "${{ secrets.OAUTH_TOKEN }}" | docker login --username oauth --password-stdin cr.yandex
+
+      - name: Tag and push Docker images
+        run: |
+          docker tag ${{ env.IMAGE_NAME }} "cr.yandex/${{ secrets.CONTAINER_REGISTRY_ID }}/app:${{ env.RELEASE_VERSION }}"
+          docker push "cr.yandex/${{ secrets.CONTAINER_REGISTRY_ID }}/app:${{ env.RELEASE_VERSION }}"
+          docker tag ${{ env.IMAGE_NAME }} "cr.yandex/${{ secrets.CONTAINER_REGISTRY_ID }}/app:${{ env.RELEASE_VERSION }}_latest"
+          docker push "cr.yandex/${{ secrets.CONTAINER_REGISTRY_ID }}/app:${{ env.RELEASE_VERSION }}_latest"
+
+  create-tag-and-update-reestrs:
+    runs-on: ubuntu-latest
+    needs: build-and-push-docker-image
+
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v4
+        with:
+          ssh-key: ${{ secrets.DEPLOY_KEY }}
+          ref: main
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "Shri-Deploy-Bot"
+          git config --global user.email "igorbarbashov@yandex.ru"
+
+      - name: Create Tag
+        run: |
+          git fetch --tags
+          git tag -a "v${{ env.RELEASE_VERSION }}" -m "Release version ${{ env.RELEASE_VERSION }}" main
+          git push origin "v${{ env.RELEASE_VERSION }}"
+
+      - name: Update CHANGELOG.md
+        env:
+          RELEASE_VERSION: ${{ env.RELEASE_VERSION }}
+        run: |
+          latest_tag=$(git tag --sort=-creatordate | sed -n '1p')
+          previous_tag=$(git tag --sort=-creatordate | sed -n '2p')
+
+          if [ ! -z "$latest_tag" ]; then
+            if [ -z "$previous_tag" ]; then
+              commit_list=$(git log --oneline $latest_tag)
+              commit_message="Update CHANGELOG.md with commit list from repository start to $latest_tag"
+            else
+              commit_list=$(git log --oneline $previous_tag..$latest_tag)
+              commit_message="Update CHANGELOG.md with commit list between $previous_tag and $latest_tag"
+            fi
+
+            echo "commit_list=$commit_list" >> $GITHUB_ENV
+            { printf "### Release %s\n\n%s\n\n%s\n" "$RELEASE_VERSION" "$commit_list" "$(cat CHANGELOG.md)" ; } > CHANGELOG.new && mv CHANGELOG.new CHANGELOG.md
+            git add CHANGELOG.md
+            git commit -m "$commit_message"
+            git push origin main
+          fi
+
+      - name: Create Release Issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue create \
+            --title "Release v${{ env.RELEASE_VERSION }}" \
+            --body "$(echo -e "**Date:** $(date -u +"%Y-%m-%dT%H:%M:%SZ")<br> \
+              **Author:** ${{ github.actor }}<br> \
+              **Version:** ${{ env.RELEASE_VERSION }}<br> \
+              **Commits:**<br>${{ env.commit_list }}<br> \
+              **Docker Image:** cr.yandex/${{ secrets.CONTAINER_REGISTRY_ID }}/app:${{ env.RELEASE_VERSION }}")"
