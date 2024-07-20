@@ -1,3 +1,5 @@
+### Release 52\n\n
+7f13ab5 Update CHANGELOG.md with commit list between v48 and v49\n\n
 Release 49
 c8b6859 Update CHANGELOG.md with commit list between v47 and v48
 Release 48
