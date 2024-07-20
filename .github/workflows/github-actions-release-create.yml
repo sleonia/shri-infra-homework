@@ -144,10 +144,10 @@ jobs:
 
           if [ ! -z "$latest_tag" ]; then
             if [ -z "$previous_tag" ]; then
-              commit_list=$(git log --oneline HEAD)
+              commit_list=$(git log --all --oneline $latest_tag)
               commit_message="Update CHANGELOG.md with commit list from repository start to $latest_tag"
             else
-              commit_list=$(git log --oneline HEAD)
+              commit_list=$(git log --all --oneline $previous_tag..$latest_tag)
               commit_message="Update CHANGELOG.md with commit list between $previous_tag and $latest_tag"
             fi
 
