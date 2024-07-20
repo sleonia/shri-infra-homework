@@ -1,3 +1,7 @@
+### Release 62
+
+82c58fb Update CHANGELOG.md with commit list between v59 and v61
+
 ### Release 61
 
 9db53da Update CHANGELOG.md with commit list between v58 and v59
