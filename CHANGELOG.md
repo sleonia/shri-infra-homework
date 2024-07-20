@@ -16,3 +16,5 @@ Release 45
 176fb25 Merge pull request #7 from IgorBarbashov/feat_release_creation_flow
 ### Release 58
 1630d9e Update CHANGELOG.md with commit list from repository start to v56
+### Release 59
+0fb2b5c Update CHANGELOG.md with commit list between v56 and v58
