@@ -1,3 +1,11 @@
+### Release 85
+
+commit be3a13e41dfd8af5f95553f2a3b9232a032a7747
+Author: Shri-Deploy-Bot <igorbarbashov@yandex.ru>
+Date:   Sat Jul 20 14:21:44 2024 +0000
+
+    Update CHANGELOG.md with commit list between v83 and v84
+
 ### Release 84
 
 a05ac92 Update CHANGELOG.md with commit list between v82 and v83
