@@ -1,3 +1,7 @@
+### Release 78
+
+4e1180f feat-release-fix: Release Fix flow
+
 ### Release 77
 
 5f4dbf3 feat-release-fix: Release Fix flow
