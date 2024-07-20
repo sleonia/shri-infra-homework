@@ -1,3 +1,7 @@
+### Release 70
+
+7ceff9d Update CHANGELOG.md with commit list between v68 and v69
+
 ### Release 69
 
 c37c856 Update CHANGELOG.md with commit list between v67 and v68
