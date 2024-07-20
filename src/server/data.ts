@@ -25,7 +25,7 @@ const generateProducts = () => {
     return products;
 }
 
-function getShortInfo({ id, name: any, price }: Product): ProductShortInfo {
+function getShortInfo({ id, name, price }: Product): ProductShortInfo {
     return { id, name, price };
 }
 
