@@ -27,7 +27,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             docker pull cr.yandex/${{ secrets.CONTAINER_REGISTRY_ID }}/app:${{ env.RELEASE_VERSION }}_latest
-            docker rm -а ${{ vars.CONTAINER_NAME }} || true
+            docker rm -f ${{ vars.CONTAINER_NAME }} || true
             docker run -d --name ${{ vars.CONTAINER_NAME }} -p ${{ vars.PORT }}:${{ vars.PORT }} cr.yandex/${{ secrets.CONTAINER_REGISTRY_ID }}/app:${{ env.RELEASE_VERSION }}_latest
             docker container prune
             docker image prune -a
