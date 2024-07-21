@@ -158,6 +158,9 @@ jobs:
             git add CHANGELOG.md
             git commit -m "$commit_message"
             git push origin main
+          else
+            echo "There are no tags"
+            exit 1
           fi
 
       - name: Create Label for Release Issue
