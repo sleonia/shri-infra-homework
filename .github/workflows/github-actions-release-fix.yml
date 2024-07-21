@@ -151,10 +151,10 @@ jobs:
 
           if [ ! -z "$latest_tag" ]; then
             if [ -z "$previous_tag" ]; then
-              commit_list=$(git log ${{ env.BRANCH_NAME }} --oneline --pretty=format:"* %s ([%h](https://github.com/${{ github.repository }}/commit/%H))" $latest_tag)
+              commit_list=$(git log --all --oneline --pretty=format:"* %s ([%h](https://github.com/${{ github.repository }}/commit/%H))" $latest_tag)
               commit_message="Update CHANGELOG.md with commit list from repository start to $latest_tag"
             else
-              commit_list=$(git log ${{ env.BRANCH_NAME }} --oneline --pretty=format:"* %s ([%h](https://github.com/${{ github.repository }}/commit/%H))" $previous_tag..$latest_tag)
+              commit_list=$(git log --all --oneline --pretty=format:"* %s ([%h](https://github.com/${{ github.repository }}/commit/%H))" $previous_tag..$latest_tag)
               commit_message="Update CHANGELOG.md with commit list between $previous_tag and $latest_tag"
             fi
 

@@ -144,10 +144,10 @@ jobs:
 
           if [ ! -z "$latest_tag" ]; then
             if [ -z "$previous_tag" ]; then
-              commit_list=$(git log main --oneline --pretty=format:"* %s ([%h](https://github.com/${{ github.repository }}/commit/%H))" $latest_tag)
+              commit_list=$(git log --all --oneline --pretty=format:"* %s ([%h](https://github.com/${{ github.repository }}/commit/%H))" $latest_tag)
               commit_message="Update CHANGELOG.md with commit list from repository start to $latest_tag"
             else
-              commit_list=$(git log main --oneline --pretty=format:"* %s ([%h](https://github.com/${{ github.repository }}/commit/%H))" $previous_tag..$latest_tag)
+              commit_list=$(git log --all --oneline --pretty=format:"* %s ([%h](https://github.com/${{ github.repository }}/commit/%H))" $previous_tag..$latest_tag)
               commit_message="Update CHANGELOG.md with commit list between $previous_tag and $latest_tag"
             fi
 
@@ -177,8 +177,8 @@ jobs:
             --title "Release v${{ env.RELEASE_VERSION }}" \
             --body "$(printf "**Date:** $(date -u +"%Y-%m-%d")<br> \
             **Author:** ${{ github.actor }}<br> \
-            **Version:** ${{ env.RELEASE_VERSION }}_fix${{ env.FIX_VERSION }}<br> \
-            **Docker Image:** cr.yandex/${{ secrets.CONTAINER_REGISTRY_ID }}/app:${{ env.RELEASE_VERSION }}_fix${{ env.FIX_VERSION }}<br> \
+            **Version:** ${{ env.RELEASE_VERSION }}<br> \
+            **Docker Image:** cr.yandex/${{ secrets.CONTAINER_REGISTRY_ID }}/app:${{ env.RELEASE_VERSION }}<br> \
             **Docker Image Latest:** cr.yandex/${{ secrets.CONTAINER_REGISTRY_ID }}/app:${{ env.RELEASE_VERSION }}_latest<br> \
             **Commits:**<br> \
             ${commit_list}")" \
