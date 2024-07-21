@@ -1,3 +1,7 @@
+### Release 113
+
+* Update CHANGELOG.md with commit list between v111 and v112 ([263b849](https://github.com/IgorBarbashov/shri-infra-homework/commit/263b849c5596e8d64b9e62e284c623e1e691428d))
+
 ### Release 112
 
 * Update CHANGELOG.md with commit list between v109 and v111 ([c345455](https://github.com/IgorBarbashov/shri-infra-homework/commit/c345455616f4bd8337da52cd64067e1608860b2d))
