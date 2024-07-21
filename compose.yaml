@@ -2,16 +2,16 @@ version: '3.8'
 
 services:
   static-service-server:
-    image: ${IMAGE_NAME}
-    container_name: ${CONTAINER_NAME}
+    image: ${IMAGE_NAME:-shri-infra}
+    container_name: ${CONTAINER_NAME:-shri-infra}
     build:
       context: .
       dockerfile: Dockerfile
       args:
-        - PORT=${PORT}
-        - NODE_VERSION=${NODE_VERSION}
+        - PORT=${PORT:-3000}
+        - NODE_VERSION=${NODE_VERSION:-20.14.0}
     ports:
-      - ${PORT}:${PORT}
+      - ${PORT:-3000}:${PORT:-3000}
     restart: on-failure
     environment:
-      - PORT=${PORT}
+      - PORT=${PORT:-3000}
