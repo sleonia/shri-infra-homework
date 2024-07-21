@@ -1,3 +1,7 @@
+### Release 104
+
+7c0a912 Update CHANGELOG.md with commit list from repository start to v103
+
 ### Release 103
 
 * feat-release-fix: Release Fix flow (3ff04e2)
