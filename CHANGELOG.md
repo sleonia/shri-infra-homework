@@ -1,3 +1,24 @@
+### Release 118
+
+* Merge pull request #62 from IgorBarbashov/fix_add_default_env_variables ([c551750](https://github.com/IgorBarbashov/shri-infra-homework/commit/c5517505a81e56c7543628e4a166128b1e04e252))
+* fix: add default ENV variables ([3db5b08](https://github.com/IgorBarbashov/shri-infra-homework/commit/3db5b0876fd3aa56178d34b9c19a8e4199d3338c))
+* Merge pull request #59 from IgorBarbashov/feat_deploy_flow ([4d46fe3](https://github.com/IgorBarbashov/shri-infra-homework/commit/4d46fe38ca90f4519f217fcd9c9b40a418894fbe))
+* feat-release-deploy: fix ([d49d8a8](https://github.com/IgorBarbashov/shri-infra-homework/commit/d49d8a8182c534839fcfb574520cc92b275cc9bd))
+* Update CHANGELOG.md with commit list between v116_fix30 and v117 ([c5573e1](https://github.com/IgorBarbashov/shri-infra-homework/commit/c5573e18cba62ed05710a16c6f095bed40de3566))
+* bugs: fix - 3 ([c4714c0](https://github.com/IgorBarbashov/shri-infra-homework/commit/c4714c00f613d452a8e4a4fed54b5189cd0e2166))
+* bugs: fix - 2 ([949a63b](https://github.com/IgorBarbashov/shri-infra-homework/commit/949a63b0c80d55b57da93818e0154ecbcc06a970))
+* bugs: fix - 1 ([a1d16e7](https://github.com/IgorBarbashov/shri-infra-homework/commit/a1d16e72c8bbcd5c88e2135ccb2fafc7fea97ef0))
+* chore: Fix typo ([0394b86](https://github.com/IgorBarbashov/shri-infra-homework/commit/0394b866a12ee404dd023969ac7fa1af69e8621f))
+* feat: fix test ([34ef57f](https://github.com/IgorBarbashov/shri-infra-homework/commit/34ef57fb6fb0a0a5c0ba3bd1fc443754c313d3b9))
+* feat: broken test ([05c329f](https://github.com/IgorBarbashov/shri-infra-homework/commit/05c329fe5ce0880b3ab1676308bd82e6da07ff57))
+* feat: adds tests on PR ([4b7f2be](https://github.com/IgorBarbashov/shri-infra-homework/commit/4b7f2becde019360489653abfa0b8f2e685e1698))
+* feat: fixes error and unblocks PR ([af4f4ac](https://github.com/IgorBarbashov/shri-infra-homework/commit/af4f4ac916b6a69420ba8ab49b9f3db418e8bebf))
+* fix: changes job name ([c509803](https://github.com/IgorBarbashov/shri-infra-homework/commit/c5098039ff3d0c568b8f82e4ffff6baf6dff5a23))
+* feat: runs linter on PR (broken TS) ([8685a85](https://github.com/IgorBarbashov/shri-infra-homework/commit/8685a85a43a97e175e2aebfcfa79daf3195072bc))
+* feat: runs linter on PR ([796fceb](https://github.com/IgorBarbashov/shri-infra-homework/commit/796fceb2df4bc137ecd6a612de02262877c43c99))
+* feat: test GitHub Actions ([cbc4cc2](https://github.com/IgorBarbashov/shri-infra-homework/commit/cbc4cc206dfd5ec0682590dbf19ad5fc4240d613))
+* feat: change author name ([e876351](https://github.com/IgorBarbashov/shri-infra-homework/commit/e876351a85a79653fe728df04a07283f4bf7c5fd))
+
 ### Release 117
 
 * bug ([be3b9b8](https://github.com/IgorBarbashov/shri-infra-homework/commit/be3b9b83eefa9464a4e3f7762685182b81cbd973))
