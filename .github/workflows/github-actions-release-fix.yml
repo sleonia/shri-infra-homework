@@ -1,5 +1,5 @@
 name: Fix Release
-run-name: Release ${{ github.run_number }} fix was triggered by ${{ github.actor }} on ${{ github.event_name }} event
+run-name: Fix ${{ github.run_number }} for Release ${{ github.event.inputs.release_version }} was manually triggered by ${{ github.actor }}
 
 on:
   workflow_dispatch:
@@ -14,8 +14,31 @@ env:
   BRANCH_NAME: "releases/${{ github.event.inputs.release_version }}"
 
 jobs:
+  check-release-number:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.BRANCH_NAME }}
+
+      - name: Check if Release exists
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          is_label_exists=$(gh label list --json name --jq ".[] | select(.name == \"v${{ env.RELEASE_VERSION }}\")")
+          if [ -n "$is_label_exists" ]; then
+            echo "Release ${{ env.RELEASE_VERSION }} exists"
+          else
+            echo "Release ${{ env.RELEASE_VERSION }} does not exist"
+            exit 1
+          fi
+
   linter-checks:
     runs-on: ubuntu-latest
+    needs:
+      - check-release-number
 
     steps:
       - name: Clone repository
@@ -36,6 +59,8 @@ jobs:
 
   tests-checks:
     runs-on: ubuntu-latest
+    needs:
+      - check-release-number
 
     steps:
       - name: Clone repository
@@ -103,6 +128,7 @@ jobs:
         with:
           ssh-key: ${{ secrets.DEPLOY_KEY }}
           ref: ${{ env.BRANCH_NAME }}
+          fetch-depth: 0
 
       - name: Configure Git
         run: |
@@ -111,30 +137,32 @@ jobs:
 
       - name: Create Tag
         run: |
-          git fetch --tags
           git tag -a "v${{ env.RELEASE_VERSION }}_fix${{ env.FIX_VERSION }}" -m "Fix ${{ env.FIX_VERSION }} for Release version ${{ env.RELEASE_VERSION }}"
           git push origin --tags
 
       - name: Update CHANGELOG.md
         env:
           RELEASE_VERSION: ${{ env.RELEASE_VERSION }}
+          FIX_VERSION: ${{ env.FIX_VERSION }}
         run: |
+          git fetch --all
           latest_tag=$(git tag --sort=-creatordate | sed -n '1p')
           previous_tag=$(git tag --sort=-creatordate | sed -n '2p')
 
           if [ ! -z "$latest_tag" ]; then
             if [ -z "$previous_tag" ]; then
-              commit_list=$(git log --all --oneline --pretty=format:"* %s ([%h](https://github.com/${{ github.repository }}/commit/%H))" $latest_tag)
+              commit_list=$(git log ${{ env.BRANCH_NAME }} --oneline --pretty=format:"* %s ([%h](https://github.com/${{ github.repository }}/commit/%H))" $latest_tag)
               commit_message="Update CHANGELOG.md with commit list from repository start to $latest_tag"
             else
-              commit_list=$(git log --all --oneline --pretty=format:"* %s ([%h](https://github.com/${{ github.repository }}/commit/%H))" $previous_tag..$latest_tag)
+              commit_list=$(git log ${{ env.BRANCH_NAME }} --oneline --pretty=format:"* %s ([%h](https://github.com/${{ github.repository }}/commit/%H))" $previous_tag..$latest_tag)
               commit_message="Update CHANGELOG.md with commit list between $previous_tag and $latest_tag"
             fi
 
             echo "$commit_list" > commit_list.txt
             echo "COMMIT_LIST_FILE=commit_list.txt" >> $GITHUB_ENV
 
-            { printf "### Release %s\n\n%s\n\n%s\n" "$RELEASE_VERSION" "$commit_list" "$(cat CHANGELOG.md)" ; } > CHANGELOG.new && mv CHANGELOG.new CHANGELOG.md
+            git checkout main
+            { printf "### Release %s-%s\n\n%s\n\n%s\n" "$RELEASE_VERSION"_fix"$FIX_VERSION" "$commit_list" "$(cat CHANGELOG.md)" ; } > CHANGELOG.new && mv CHANGELOG.new CHANGELOG.md
             git add CHANGELOG.md
             git commit -m "$commit_message"
             git push origin main
@@ -142,11 +170,6 @@ jobs:
             echo "There are no tags"
             exit 1
           fi
-
-      - name: Create Label for Release Issue
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: gh label create "v${{ env.RELEASE_VERSION }}" --color "f29513" --description "Label for Release v${{ env.RELEASE_VERSION }}"
 
       - name: Add comment to Release Issue
         env:
@@ -157,10 +180,11 @@ jobs:
             commit_list=$(cat ${{ env.COMMIT_LIST_FILE }})
             gh issue comment $issue_id --body "$(echo -e "**Date:** $(date -u +"%Y-%m-%d")<br> \
               **Author:** ${{ github.actor }}<br> \
-              **Version:** ${{ env.RELEASE_VERSION }}<br> \
-              **Commits:**<br><br>${commit_list}<br> \
+              **Version:** ${{ env.RELEASE_VERSION }}_fix${{ env.FIX_VERSION }}<br> \
               **Docker Image:** cr.yandex/${{ secrets.CONTAINER_REGISTRY_ID }}/app:${{ env.RELEASE_VERSION }}_fix${{ env.FIX_VERSION }}<br> \
-              **Docker Image Latest:** cr.yandex/${{ secrets.CONTAINER_REGISTRY_ID }}/app:${{ env.RELEASE_VERSION }}_latest")"
+              **Docker Image Latest:** cr.yandex/${{ secrets.CONTAINER_REGISTRY_ID }}/app:${{ env.RELEASE_VERSION }}_latest<br> \
+              **Commits:**<br> \
+              ${commit_list}")"
           else
             echo "Issue with label v${{ env.RELEASE_VERSION }} not found."
             exit 1
