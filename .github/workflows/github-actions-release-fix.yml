@@ -1,5 +1,5 @@
-name: Create Release
-run-name: Release ${{ github.run_number }} creation was triggered by ${{ github.actor }} on ${{ github.event_name }} event
+name: Fix Release
+run-name: Release ${{ github.run_number }} fix was triggered by ${{ github.actor }} on ${{ github.event_name }} event
 
 env:
   RELEASE_VERSION: ${{ github.run_number }}
