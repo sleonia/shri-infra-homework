@@ -174,11 +174,12 @@ jobs:
         run: |
           commit_list=$(cat ${{ env.COMMIT_LIST_FILE }})
           gh issue create \
-            --title "Release v${{ env.RELEASE_VERSION }}"
-            --body "$(echo -e "**Date:** $(date -u +"%Y-%m-%d")<br> \
-              **Author:** ${{ github.actor }}<br> \
-              **Version:** ${{ env.RELEASE_VERSION }}<br> \
-              **Docker Image:** cr.yandex/${{ secrets.CONTAINER_REGISTRY_ID }}/app:${{ env.RELEASE_VERSION }}<br> \
-              **Commits:**<br> \
-              ${commit_list}<br> \")"
+            --title "Release v${{ env.RELEASE_VERSION }}" \
+            --body "$(printf "**Date:** $(date -u +"%Y-%m-%d")<br> \
+            **Author:** ${{ github.actor }}<br> \
+            **Version:** ${{ env.RELEASE_VERSION }}_fix${{ env.FIX_VERSION }}<br> \
+            **Docker Image:** cr.yandex/${{ secrets.CONTAINER_REGISTRY_ID }}/app:${{ env.RELEASE_VERSION }}_fix${{ env.FIX_VERSION }}<br> \
+            **Docker Image Latest:** cr.yandex/${{ secrets.CONTAINER_REGISTRY_ID }}/app:${{ env.RELEASE_VERSION }}_latest<br> \
+            **Commits:**<br> \
+            ${commit_list}")" \
             --label "v${{ env.RELEASE_VERSION }}"
