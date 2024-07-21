@@ -1,3 +1,8 @@
+### Release 106_fix26-* Merge pull request #47 from IgorBarbashov/releases/106-fix ([3d219f3](https://github.com/IgorBarbashov/shri-infra-homework/commit/3d219f35ff6d1df931714d37a9427cca5ca1a964))
+* fixes ([d9b7bdd](https://github.com/IgorBarbashov/shri-infra-homework/commit/d9b7bdd0c1a86b71f6fd54ae7a43d5c5a8bcb29d))
+* Merge pull request #46 from IgorBarbashov/releases/106-fix ([e7c7818](https://github.com/IgorBarbashov/shri-infra-homework/commit/e7c7818e17f33b4b84a9cf07fc6df2aa315696b9))
+* fix: Fix for Release 106 ([b6ee8b9](https://github.com/IgorBarbashov/shri-infra-homework/commit/b6ee8b9ccd68cb60f184fc16bb49fe57d63c74fe))
+
 ### Release 106_fix25-
 
 ### Release 106_fix24-
