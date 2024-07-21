@@ -1,3 +1,5 @@
+### Release 106_fix24-
+
 ### Release 106
 
 * feat-release-fix: Release Fix flow ([f88ef06](https://github.com/IgorBarbashov/shri-infra-homework/commit/f88ef06e2df4f8dcc15e41c131d5f0d6fef2b12c))
@@ -186,3 +188,5 @@
 * feat: change author name (#1) ([2e18cde](https://github.com/IgorBarbashov/shri-infra-homework/commit/2e18cdea2553506f9282191904dac8a99f6e75bd))
 * feat: change author name ([e876351](https://github.com/IgorBarbashov/shri-infra-homework/commit/e876351a85a79653fe728df04a07283f4bf7c5fd))
 * Add infra homework ([466eb3c](https://github.com/IgorBarbashov/shri-infra-homework/commit/466eb3ce92dfd5033140f4be37653f7e58bf07cc))
+
+
