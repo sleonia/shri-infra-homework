@@ -178,7 +178,7 @@ jobs:
           issue_id=$(gh issue list --label "v${{ env.RELEASE_VERSION }}" --json number --jq '.[0].number')
           if [ -n "$issue_id" ]; then
             commit_list=$(cat ${{ env.COMMIT_LIST_FILE }})
-            gh issue comment $issue_id --body "$(echo -e "**Date:** $(date -u +"%Y-%m-%d")<br> \
+            gh issue comment $issue_id --body "$(printf "**Date:** $(date -u +"%Y-%m-%d")<br> \
               **Author:** ${{ github.actor }}<br> \
               **Version:** ${{ env.RELEASE_VERSION }}_fix${{ env.FIX_VERSION }}<br> \
               **Docker Image:** cr.yandex/${{ secrets.CONTAINER_REGISTRY_ID }}/app:${{ env.RELEASE_VERSION }}_fix${{ env.FIX_VERSION }}<br> \
