@@ -1,3 +1,7 @@
+### Release 107
+
+* Update CHANGELOG.md with commit list between v106 and v106_fix26 ([82bf3d3](https://github.com/IgorBarbashov/shri-infra-homework/commit/82bf3d3a2bdcf2115bf9face67fee67b1a884172))
+
 ### Release 106_fix26-* Merge pull request #47 from IgorBarbashov/releases/106-fix ([3d219f3](https://github.com/IgorBarbashov/shri-infra-homework/commit/3d219f35ff6d1df931714d37a9427cca5ca1a964))
 * fixes ([d9b7bdd](https://github.com/IgorBarbashov/shri-infra-homework/commit/d9b7bdd0c1a86b71f6fd54ae7a43d5c5a8bcb29d))
 * Merge pull request #46 from IgorBarbashov/releases/106-fix ([e7c7818](https://github.com/IgorBarbashov/shri-infra-homework/commit/e7c7818e17f33b4b84a9cf07fc6df2aa315696b9))
@@ -195,5 +199,3 @@
 * feat: change author name (#1) ([2e18cde](https://github.com/IgorBarbashov/shri-infra-homework/commit/2e18cdea2553506f9282191904dac8a99f6e75bd))
 * feat: change author name ([e876351](https://github.com/IgorBarbashov/shri-infra-homework/commit/e876351a85a79653fe728df04a07283f4bf7c5fd))
 * Add infra homework ([466eb3c](https://github.com/IgorBarbashov/shri-infra-homework/commit/466eb3ce92dfd5033140f4be37653f7e58bf07cc))
-
-
