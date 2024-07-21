@@ -1,3 +1,18 @@
+### Release 115_fix28-* fix: fixes-3 ([50ee0b3](https://github.com/IgorBarbashov/shri-infra-homework/commit/50ee0b3be686778b249fc8dd8ed54c04639c32bc))
+* fix: fixes-2 ([26d764b](https://github.com/IgorBarbashov/shri-infra-homework/commit/26d764bc41d5f11178ff623382536420a2eba9cd))
+* fix: fixes-1 ([aea1d42](https://github.com/IgorBarbashov/shri-infra-homework/commit/aea1d427719ec06f2791135510cf22b987a91121))
+* Update CHANGELOG.md with commit list from repository start to v115 ([f64346e](https://github.com/IgorBarbashov/shri-infra-homework/commit/f64346e333cbaec0b0b89645e4030a8d77c6d62e))
+* chore: Fix typo ([0394b86](https://github.com/IgorBarbashov/shri-infra-homework/commit/0394b866a12ee404dd023969ac7fa1af69e8621f))
+* feat: fix test ([34ef57f](https://github.com/IgorBarbashov/shri-infra-homework/commit/34ef57fb6fb0a0a5c0ba3bd1fc443754c313d3b9))
+* feat: broken test ([05c329f](https://github.com/IgorBarbashov/shri-infra-homework/commit/05c329fe5ce0880b3ab1676308bd82e6da07ff57))
+* feat: adds tests on PR ([4b7f2be](https://github.com/IgorBarbashov/shri-infra-homework/commit/4b7f2becde019360489653abfa0b8f2e685e1698))
+* feat: fixes error and unblocks PR ([af4f4ac](https://github.com/IgorBarbashov/shri-infra-homework/commit/af4f4ac916b6a69420ba8ab49b9f3db418e8bebf))
+* fix: changes job name ([c509803](https://github.com/IgorBarbashov/shri-infra-homework/commit/c5098039ff3d0c568b8f82e4ffff6baf6dff5a23))
+* feat: runs linter on PR (broken TS) ([8685a85](https://github.com/IgorBarbashov/shri-infra-homework/commit/8685a85a43a97e175e2aebfcfa79daf3195072bc))
+* feat: runs linter on PR ([796fceb](https://github.com/IgorBarbashov/shri-infra-homework/commit/796fceb2df4bc137ecd6a612de02262877c43c99))
+* feat: test GitHub Actions ([cbc4cc2](https://github.com/IgorBarbashov/shri-infra-homework/commit/cbc4cc206dfd5ec0682590dbf19ad5fc4240d613))
+* feat: change author name ([e876351](https://github.com/IgorBarbashov/shri-infra-homework/commit/e876351a85a79653fe728df04a07283f4bf7c5fd))
+
 ### Release 115
 
 * Merge pull request #54 from IgorBarbashov/feat_release_fix_flow ([4ace6f5](https://github.com/IgorBarbashov/shri-infra-homework/commit/4ace6f509c7fc669a50ca177b6f8c02e50a08c1c))
@@ -50,3 +65,5 @@
 ### Release 114
 
 * Merge pull request #52 from IgorBarbashov/feat_release_fix_flow ([9f01034](https://github.com/IgorBarbashov/shri-infra-homework/commit/9f010341beddfa41895d361db03dbe3f2bd5a03e))
+
+
