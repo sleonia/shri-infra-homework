@@ -10,166 +10,41 @@ on:
 
 env:
   RELEASE_VERSION: ${{ github.event.inputs.release_version }}
-  FIX_VERSION: ${{ github.run_number }}
-  BRANCH_NAME: "releases/${{ github.event.inputs.release_version }}"
 
 jobs:
-  check-release-number:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Clone repository
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ env.BRANCH_NAME }}
-
-      - name: Check if Release exists
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          is_label_exists=$(gh label list --json name --jq ".[] | select(.name == \"v${{ env.RELEASE_VERSION }}\")")
-          if [ -n "$is_label_exists" ]; then
-            echo "Release ${{ env.RELEASE_VERSION }} exists"
-          else
-            echo "Release ${{ env.RELEASE_VERSION }} does not exist"
-            exit 1
-          fi
-
-  linter-checks:
-    runs-on: ubuntu-latest
-    needs:
-      - check-release-number
-
-    steps:
-      - name: Clone repository
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ env.BRANCH_NAME }}
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run lint
-        run: npm run lint
-
-  tests-checks:
-    runs-on: ubuntu-latest
-    needs:
-      - check-release-number
-
-    steps:
-      - name: Clone repository
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ env.BRANCH_NAME }}
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run tests
-        run: npm run test
-
-  build-and-push-docker-image:
-    runs-on: ubuntu-latest
-    needs:
-      - linter-checks
-      - tests-checks
-
-    env:
-      PORT: ${{ vars.PORT }}
-      IMAGE_NAME: ${{ vars.IMAGE_NAME }}
-      CONTAINER_NAME: ${{ vars.CONTAINER_NAME }}
-      NODE_VERSION: ${{ vars.NODE_VERSION }}
-
-    steps:
-      - name: Clone repository
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ env.BRANCH_NAME }}
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build Docker image
-        run: npm run build:docker
-
-      - name: Authorize Yandex Cloud Container Registry
+      - name: Authenticate with Yandex Cloud
         run: echo "${{ secrets.OAUTH_TOKEN }}" | docker login --username oauth --password-stdin cr.yandex
 
-      - name: Tag and push Docker images
-        run: |
-          docker tag ${{ env.IMAGE_NAME }} "cr.yandex/${{ secrets.CONTAINER_REGISTRY_ID }}/app:${{ env.RELEASE_VERSION }}_fix${{ env.FIX_VERSION }}"
-          docker push "cr.yandex/${{ secrets.CONTAINER_REGISTRY_ID }}/app:${{ env.RELEASE_VERSION }}_fix${{ env.FIX_VERSION }}"
-          docker tag ${{ env.IMAGE_NAME }} "cr.yandex/${{ secrets.CONTAINER_REGISTRY_ID }}/app:${{ env.RELEASE_VERSION }}_latest"
-          docker push "cr.yandex/${{ secrets.CONTAINER_REGISTRY_ID }}/app:${{ env.RELEASE_VERSION }}_latest"
+      - name: Connect to the VM via ssh and Deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.PUBLIC_IP }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            docker pull cr.yandex/${{ secrets.CONTAINER_REGISTRY_ID }}/app:${{ env.RELEASE_VERSION }}_latest
+            docker rm -а ${{ vars.CONTAINER_NAME }} || true
+            docker run -d --name ${{ vars.CONTAINER_NAME }} -p ${{ vars.PORT }}:${{ vars.PORT }} cr.yandex/${{ secrets.CONTAINER_REGISTRY_ID }}/app:${{ env.RELEASE_VERSION }}_latest
+            docker container prune
+            docker image prune -a
 
-  create-tag-and-update-reestrs:
+  issue-comment:
     runs-on: ubuntu-latest
-    needs: build-and-push-docker-image
+    needs:
+      - deploy
 
     steps:
       - name: Clone repository
         uses: actions/checkout@v4
-        with:
-          ssh-key: ${{ secrets.DEPLOY_KEY }}
-          ref: ${{ env.BRANCH_NAME }}
-          fetch-depth: 0
 
       - name: Configure Git
         run: |
           git config --global user.name "Shri-Deploy-Bot"
           git config --global user.email "igorbarbashov@yandex.ru"
-
-      - name: Create Tag
-        run: |
-          git tag -a "v${{ env.RELEASE_VERSION }}_fix${{ env.FIX_VERSION }}" -m "Fix ${{ env.FIX_VERSION }} for Release version ${{ env.RELEASE_VERSION }}"
-          git push origin --tags
-
-      - name: Update CHANGELOG.md
-        env:
-          RELEASE_VERSION: ${{ env.RELEASE_VERSION }}
-          FIX_VERSION: ${{ env.FIX_VERSION }}
-        run: |
-          git fetch --all
-          latest_tag=$(git tag --sort=-creatordate | sed -n '1p')
-          previous_tag=$(git tag --sort=-creatordate | sed -n '2p')
-
-          if [ ! -z "$latest_tag" ]; then
-            if [ -z "$previous_tag" ]; then
-              commit_list=$(git log --all --oneline --pretty=format:"* %s ([%h](https://github.com/${{ github.repository }}/commit/%H))" $latest_tag)
-              commit_message="Update CHANGELOG.md with commit list from repository start to $latest_tag"
-            else
-              commit_list=$(git log --all --oneline --pretty=format:"* %s ([%h](https://github.com/${{ github.repository }}/commit/%H))" $previous_tag..$latest_tag)
-              commit_message="Update CHANGELOG.md with commit list between $previous_tag and $latest_tag"
-            fi
-
-            echo "$commit_list" > commit_list.txt
-            echo "COMMIT_LIST_FILE=commit_list.txt" >> $GITHUB_ENV
-
-            git checkout main
-            { printf "### Release %s-%s\n\n%s\n\n%s\n" "$RELEASE_VERSION"_fix"$FIX_VERSION" "$commit_list" "$(cat CHANGELOG.md)" ; } > CHANGELOG.new && mv CHANGELOG.new CHANGELOG.md
-            git add CHANGELOG.md
-            git commit -m "$commit_message"
-            git push origin main
-          else
-            echo "There are no tags"
-            exit 1
-          fi
 
       - name: Add comment to Release Issue
         env:
@@ -177,14 +52,11 @@ jobs:
         run: |
           issue_id=$(gh issue list --label "v${{ env.RELEASE_VERSION }}" --json number --jq '.[0].number')
           if [ -n "$issue_id" ]; then
-            commit_list=$(cat ${{ env.COMMIT_LIST_FILE }})
-            gh issue comment $issue_id --body "$(printf "**Date:** $(date -u +"%Y-%m-%d")<br> \
+            gh issue comment $issue_id --body "$(printf "**Release deployed successfully**<br> \
+              **Date:** $(date -u +"%Y-%m-%d")<br> \
               **Author:** ${{ github.actor }}<br> \
-              **Version:** ${{ env.RELEASE_VERSION }}_fix${{ env.FIX_VERSION }}<br> \
-              **Docker Image:** cr.yandex/${{ secrets.CONTAINER_REGISTRY_ID }}/app:${{ env.RELEASE_VERSION }}_fix${{ env.FIX_VERSION }}<br> \
-              **Docker Image Latest:** cr.yandex/${{ secrets.CONTAINER_REGISTRY_ID }}/app:${{ env.RELEASE_VERSION }}_latest<br> \
-              **Commits:**<br> \
-              ${commit_list}")"
+              **Version:** ${{ env.RELEASE_VERSION }}_latest<br> \
+              **Docker Image:** cr.yandex/${{ secrets.CONTAINER_REGISTRY_ID }}/app:${{ env.RELEASE_VERSION }}_latest")"
           else
             echo "Issue with label v${{ env.RELEASE_VERSION }} not found."
             exit 1
